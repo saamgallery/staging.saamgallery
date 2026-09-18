@@ -143,8 +143,12 @@ gallery supplies the files.
 Pages on **every push, on every branch**. A repo has one Pages deployment, so the
 most recent push is what is live on staging.
 
-The workflow enables Pages itself on its first run (`enablement: true` on
-`configure-pages`), so there is no manual Settings step.
+**One-time repo setup, done by hand: Settings → Pages → Source: GitHub
+Actions.** The workflow cannot do this for itself — `configure-pages` with
+`enablement: true` was tried and the Actions `GITHUB_TOKEN` is refused
+("Resource not accessible by integration"), because creating a Pages site
+needs repo admin. Until that switch is flipped, every run fails at
+`configure-pages`; after it, they deploy unattended.
 
 ## Where this goes next
 
