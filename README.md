@@ -143,12 +143,24 @@ gallery supplies the files.
 Pages on **every push, on every branch**. A repo has one Pages deployment, so the
 most recent push is what is live on staging.
 
-**One-time repo setup, done by hand: Settings → Pages → Source: GitHub
-Actions.** The workflow cannot do this for itself — `configure-pages` with
-`enablement: true` was tried and the Actions `GITHUB_TOKEN` is refused
-("Resource not accessible by integration"), because creating a Pages site
-needs repo admin. Until that switch is flipped, every run fails at
-`configure-pages`; after it, they deploy unattended.
+### One-time repo setup, done by hand
+
+Two settings, both needing repo admin. The workflow cannot apply either
+itself: `configure-pages` with `enablement: true` was tried and the Actions
+`GITHUB_TOKEN` is refused ("Resource not accessible by integration").
+
+1. **Settings → Pages → Source: GitHub Actions.** Without it every run fails
+   at `configure-pages` with "Get Pages site failed".
+2. **Settings → Environments → `github-pages` → Deployment branches and
+   tags → No restriction.** Enabling Pages creates this environment limited
+   to the default branch, which is the opposite of what a staging repo wants:
+   the `deploy-staging` job names that environment, so on any other branch it
+   is refused before its first step — a job that fails in about a second with
+   no logs at all. Allowing every branch is what makes "every branch deploys
+   to staging" true. (Narrowing it to a pattern works too, but then a branch
+   outside the pattern silently stops deploying.)
+
+After both, pushes deploy unattended.
 
 ## Where this goes next
 
