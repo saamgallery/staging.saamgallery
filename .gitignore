@@ -1,0 +1,6 @@
+# generated single-file build (produced by `make dev`, published by CI)
+ui/dist/
+
+# OS / editor cruft
+.DS_Store
+*.swp

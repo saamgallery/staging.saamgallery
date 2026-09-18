@@ -1,0 +1,46 @@
+name: Deploy to GitHub Pages
+
+# This is the staging repo: every branch that is pushed becomes the staging
+# site. A repo has one Pages deployment, so the most recent push is what is
+# live there — not a URL per branch.
+#
+# Production is a later step. When saamgallery gets a production repo, this
+# file grows the deploy-prod / build-check / promote-prod jobs and is
+# committed identically to both repos (see the unframe skill, "Going to
+# production"). Until then there is one job, because there is one site.
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  deploy-staging:
+    if: github.repository == 'saamgallery/staging.saamgallery'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # make, awk and sed are already on the runner — nothing to install.
+      - name: Build the offline single-file site
+        run: make dev
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ui/dist
+
+      - uses: actions/deploy-pages@v4
+        id: deployment

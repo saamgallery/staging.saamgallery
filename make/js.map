@@ -1,0 +1,8 @@
+{{reactivity-js}}:ui/reactivity.js
+{{demo-js}}:ui/demo.js
+{{header-js}}:ui/comps/header.js
+{{gallery-js}}:ui/comps/gallery.js
+{{artist-js}}:ui/comps/artist.js
+{{lightbox-js}}:ui/comps/lightbox.js
+{{cart-js}}:ui/comps/cart.js
+{{enquiry-js}}:ui/comps/enquiry.js
