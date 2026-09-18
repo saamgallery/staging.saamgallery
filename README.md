@@ -143,7 +143,8 @@ gallery supplies the files.
 Pages on **every push, on every branch**. A repo has one Pages deployment, so the
 most recent push is what is live on staging.
 
-One-time repo setup, done by hand: **Settings → Pages → Source: GitHub Actions.**
+The workflow enables Pages itself on its first run (`enablement: true` on
+`configure-pages`), so there is no manual Settings step.
 
 ## Where this goes next
 
