@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="./image-slot.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; background: #fbfbfa; }
+  * { box-sizing: border-box; }
+  a { color: #111110; text-decoration: none; }
+  a:hover { color: #8a7a5e; }
+  input, textarea, button { font-family: inherit; }
+  ::selection { background: #e9e4d8; }
+  @keyframes saamFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes saamDraw { from { stroke-dashoffset: 900; } to { stroke-dashoffset: 0; } }
+</style>
+</helmet>
+
+<div style="font-family:'Instrument Sans',system-ui,sans-serif;color:#111110;background:#fbfbfa;min-height:100vh;overflow-x:hidden">
+
+  <header style="position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:18px 40px;background:rgba(251,251,250,.88);backdrop-filter:blur(14px);border-bottom:1px solid rgba(17,17,16,.08)">
+    <div style="display:flex;align-items:center;gap:11px;cursor:pointer" onClick="{{ goHome }}">
+      <svg width="34" height="34" viewBox="0 0 100 100" fill="#111110" aria-label="saam" role="img">
+        <circle cx="41" cy="16" r="9" />
+        <rect x="33" y="29" width="16" height="13" />
+        <circle cx="62" cy="21" r="8.5" />
+        <rect x="55" y="33" width="15" height="12" />
+        <circle cx="20" cy="31" r="14" />
+        <rect x="8" y="50" width="24" height="42" />
+        <circle cx="80" cy="31" r="14" />
+        <rect x="68" y="52" width="24" height="40" />
+        <circle cx="50" cy="52" r="16" />
+        <rect x="38" y="74" width="24" height="26" />
+        <rect x="26" y="70" width="9" height="20" />
+        <rect x="65" y="68" width="9" height="22" />
+      </svg>
+      <span style="font-family:'Instrument Serif',Georgia,serif;font-size:24px;letter-spacing:.2em;line-height:1">SAAM</span>
+    </div>
+    <nav style="display:flex;align-items:center;gap:28px;font-size:13.5px;letter-spacing:.06em;text-transform:uppercase">
+      <span style="cursor:pointer" onClick="{{ goHome }}">Artists</span>
+      <span style="cursor:pointer" onClick="{{ scrollAbout }}">About</span>
+      <span style="cursor:pointer;display:flex;align-items:center;gap:7px" onClick="{{ openCart }}">Collection
+        <span style="min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#111110;color:#fbfbfa;font-size:11px;display:inline-flex;align-items:center;justify-content:center;letter-spacing:0">{{ cartCount }}</span>
+      </span>
+    </nav>
+  </header>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <div>
+      <section style="position:relative;padding:112px 40px 84px;max-width:1320px;margin:0 auto">
+        <svg viewBox="0 0 420 200" width="360" height="170" style="position:absolute;right:48px;top:52px;opacity:{{ inkOpacity }};pointer-events:none" fill="none">
+          <path d="M8 150c48-96 96 40 132-24 22-39-18-52 6-74 20-18 44 12 30 44-16 36-52 22-38-14" stroke="{{ inkColor }}" stroke-width="1.4" stroke-linecap="round" style="animation:saamDraw 2.6s ease-out both;stroke-dasharray:900" />
+          <path d="M196 120c40 26 84-8 118-44" stroke="{{ inkColor }}" stroke-width="1.1" stroke-linecap="round" />
+        </svg>
+        <p style="margin:0 0 30px;font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;color:#5f5f58">Cape Town &middot; est. 2019 &middot; together</p>
+        <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(56px,10vw,140px);line-height:.92;letter-spacing:-.02em;max-width:16ch;text-wrap:pretty">A gallery held <em style="font-style:italic">together</em>.</h1>
+        <svg viewBox="0 0 260 90" width="230" height="80" style="position:absolute;left:40px;bottom:-4px;opacity:{{ inkOpacity }};pointer-events:none" fill="none">
+          <path d="M4 62c26 14 40-30 66-22 20 6 10 34 30 36 26 3 22-42 48-40 18 2 14 26 34 22 16-3 20-18 28-30" stroke="{{ inkColor }}" stroke-width="1.2" stroke-linecap="round" />
+          <path d="M120 74c30 6 62 2 92-10" stroke="{{ inkColor }}" stroke-width="1" stroke-linecap="round" />
+        </svg>
+        <p style="margin:34px 0 0;max-width:46ch;font-size:17px;line-height:1.6;color:#4a4a45">Six artists, one room. Every work here hangs in the physical gallery and is available to acquire or enquire after.</p>
+      </section>
+
+      <sc-for list="{{ artistRows }}" as="a" hint-placeholder-count="3">
+        <section style="position:relative;padding:56px 40px 96px;max-width:1320px;margin:0 auto;background:radial-gradient(120% 70% at 50% -10%, rgba(17,17,16,.045), rgba(17,17,16,0) 60%)">
+          <div style="display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:56px;align-items:start">
+            <div style="position:relative">
+              <svg viewBox="0 0 180 120" width="150" height="100" style="position:absolute;left:-16px;bottom:-84px;opacity:{{ inkOpacity }};pointer-events:none" fill="none">
+                <path d="M6 96c22-40 46 6 66-26 12-20-6-38 14-44 16-5 24 14 12 26-12 12-26 0-16-12" stroke="{{ inkColor }}" stroke-width="1.15" stroke-linecap="round" />
+                <path d="M96 70c26 16 56 8 78-18" stroke="{{ inkColor }}" stroke-width="1" stroke-linecap="round" />
+              </svg>
+              <p style="margin:0 0 10px;font-size:12px;letter-spacing:.2em;color:#5f5f58">{{ a.number }}</p>
+              <h2 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:38px;line-height:1.05;letter-spacing:-.01em">{{ a.name }}</h2>
+              <p style="margin:12px 0 22px;font-size:14px;color:#5f5f58;font-style:italic">{{ a.medium }}</p>
+              <p style="margin:0 0 26px;font-size:15px;line-height:1.65;color:#4a4a45;text-wrap:pretty">{{ a.short }}</p>
+              <span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid #111110;padding-bottom:3px;cursor:pointer" onClick="{{ a.open }}">View artist</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:36px;align-items:start">
+              <div style="position:relative;margin-top:0" style-after="content:'';position:absolute;left:6%;right:6%;bottom:-26px;height:54px;background:linear-gradient(to bottom, rgba(17,17,16,.20), rgba(17,17,16,0));filter:blur(11px);border-radius:50%;pointer-events:none">
+                <div style="position:relative;height:376px;background:#fff;padding:11px;border:1px solid rgba(17,17,16,.08);box-shadow:0 1px 2px rgba(17,17,16,.10), 22px 26px 46px -22px rgba(17,17,16,.34);cursor:pointer" onClick="{{ a.w1.open }}">
+                  <image-slot id="{{ a.w1.slotId }}" shape="rect" placeholder="{{ a.w1.title }}" style="width:100%;height:100%"></image-slot>
+                </div>
+                <p style="margin:26px 0 0;font-size:13px;line-height:1.5;color:#6a6a62"><em style="font-style:italic;color:#111110">{{ a.w1.title }}</em>, {{ a.w1.year }}<br />{{ a.w1.priceLabel }}</p>
+              </div>
+              <div style="position:relative;margin-top:104px" style-after="content:'';position:absolute;left:6%;right:6%;bottom:-24px;height:48px;background:linear-gradient(to bottom, rgba(17,17,16,.18), rgba(17,17,16,0));filter:blur(11px);border-radius:50%;pointer-events:none">
+                <div style="position:relative;height:238px;background:#fff;padding:9px;border:1px solid rgba(17,17,16,.08);box-shadow:0 1px 2px rgba(17,17,16,.10), 18px 22px 40px -20px rgba(17,17,16,.32);cursor:pointer" onClick="{{ a.w2.open }}">
+                  <image-slot id="{{ a.w2.slotId }}" shape="rect" placeholder="{{ a.w2.title }}" style="width:100%;height:100%"></image-slot>
+                </div>
+                <p style="margin:24px 0 0;font-size:13px;line-height:1.5;color:#6a6a62"><em style="font-style:italic;color:#111110">{{ a.w2.title }}</em>, {{ a.w2.year }}<br />{{ a.w2.priceLabel }}</p>
+              </div>
+              <div style="position:relative;margin-top:40px" style-after="content:'';position:absolute;left:6%;right:6%;bottom:-25px;height:50px;background:linear-gradient(to bottom, rgba(17,17,16,.19), rgba(17,17,16,0));filter:blur(11px);border-radius:50%;pointer-events:none">
+                <div style="position:relative;height:312px;background:#fff;padding:10px;border:1px solid rgba(17,17,16,.08);box-shadow:0 1px 2px rgba(17,17,16,.10), 20px 24px 42px -20px rgba(17,17,16,.33);cursor:pointer" onClick="{{ a.w3.open }}">
+                  <image-slot id="{{ a.w3.slotId }}" shape="rect" placeholder="{{ a.w3.title }}" style="width:100%;height:100%"></image-slot>
+                </div>
+                <p style="margin:25px 0 0;font-size:13px;line-height:1.5;color:#6a6a62"><em style="font-style:italic;color:#111110">{{ a.w3.title }}</em>, {{ a.w3.year }}<br />{{ a.w3.priceLabel }}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </sc-for>
+
+      <section id="saam-about" style="position:relative;padding:96px 40px 120px;max-width:1320px;margin:0 auto;border-top:1px solid rgba(17,17,16,.1)">
+        <svg viewBox="0 0 300 120" width="240" height="96" style="position:absolute;left:34px;bottom:34px;opacity:{{ inkOpacity }};pointer-events:none" fill="none">
+          <path d="M6 88c34-52 62 18 92-20 18-23 0-44 22-52 18-7 30 14 18 30-14 18-34 4-22-12" stroke="{{ inkColor }}" stroke-width="1.3" stroke-linecap="round" />
+        </svg>
+        <div style="display:grid;grid-template-columns:minmax(0,260px) minmax(0,640px);gap:56px">
+          <p style="margin:0;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#5f5f58">About saam</p>
+          <div>
+            <p style="margin:0 0 20px;font-family:'Instrument Serif',Georgia,serif;font-size:30px;line-height:1.3;letter-spacing:-.01em;text-wrap:pretty">Saam means together. The gallery is a shared wall rather than a roster.</p>
+            <p style="margin:0;font-size:16px;line-height:1.7;color:#4a4a45;text-wrap:pretty">Works are hung in rotation and shipped worldwide, crated and insured. Enquiries are answered by the artist and the gallery together, usually within two days.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isArtist }}" hint-placeholder-val="{{ false }}">
+    <div style="animation:saamFade .4s ease-out both">
+      <section style="position:relative;padding:64px 40px 40px;max-width:1320px;margin:0 auto">
+        <span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#6a6a62;cursor:pointer" onClick="{{ goHome }}">&larr; All artists</span>
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,520px);gap:64px;align-items:end;margin-top:44px">
+          <div>
+            <h1 style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:clamp(44px,6vw,84px);line-height:.98;letter-spacing:-.02em">{{ artist.name }}</h1>
+            <p style="margin:16px 0 0;font-size:15px;color:#5f5f58;font-style:italic">{{ artist.medium }} &middot; {{ artist.based }}</p>
+          </div>
+          <div style="position:relative">
+            <svg viewBox="0 0 300 110" width="250" height="92" style="position:absolute;right:-10px;top:-104px;opacity:{{ inkOpacity }};pointer-events:none" fill="none">
+              <path d="M6 84c34-46 58 16 88-18 18-21 2-42 24-50 18-6 30 14 18 30-14 18-34 4-22-12" stroke="{{ inkColor }}" stroke-width="1.2" stroke-linecap="round" />
+              <path d="M150 62c34 22 88 8 144-34" stroke="{{ inkColor }}" stroke-width="1" stroke-linecap="round" />
+            </svg>
+            <p style="margin:0 0 22px;font-size:16px;line-height:1.7;color:#3a3a35;text-wrap:pretty">{{ artist.bio }}</p>
+            <div style="display:flex;gap:14px;flex-wrap:wrap">
+              <span style="padding:12px 22px;background:#111110;color:#fbfbfa;font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" onClick="{{ artist.enquireStudio }}">Enquire</span>
+              <a href="{{ artist.instagramUrl }}" target="_blank" rel="noopener" style="padding:12px 22px;border:1px solid rgba(17,17,16,.22);font-size:13px;letter-spacing:.08em;text-transform:uppercase">{{ artist.instagram }}</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section style="position:relative;padding:40px 40px 88px;max-width:1320px;margin:0 auto;background:radial-gradient(110% 60% at 50% -6%, rgba(17,17,16,.05), rgba(17,17,16,0) 62%)">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:48px 40px">
+          <sc-for list="{{ artist.works }}" as="w" hint-placeholder-count="4">
+            <div style="position:relative" style-after="content:'';position:absolute;left:7%;right:7%;bottom:-28px;height:52px;background:linear-gradient(to bottom, rgba(17,17,16,.19), rgba(17,17,16,0));filter:blur(12px);border-radius:50%;pointer-events:none">
+              <div style="position:relative;height:330px;background:#fff;padding:11px;border:1px solid rgba(17,17,16,.08);box-shadow:0 1px 2px rgba(17,17,16,.10), 20px 24px 44px -20px rgba(17,17,16,.33);cursor:zoom-in" onClick="{{ w.open }}">
+                <image-slot id="{{ w.slotId }}" shape="rect" placeholder="{{ w.title }}" style="width:100%;height:100%"></image-slot>
+              </div>
+              <p style="margin:26px 0 4px;font-family:'Instrument Serif',Georgia,serif;font-size:21px;font-style:italic;line-height:1.2">{{ w.title }}</p>
+              <p style="margin:0;font-size:13px;line-height:1.6;color:#6a6a62">{{ w.meta }}</p>
+              <p style="margin:8px 0 0;font-size:13.5px;color:#111110">{{ w.priceLabel }} &middot; <span style="color:#8a7a5e">{{ w.statusLabel }}</span></p>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <section style="padding:0 40px 120px;max-width:1320px;margin:0 auto">
+        <p style="margin:0 0 18px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#5f5f58">Available works</p>
+        <div style="border-top:1px solid rgba(17,17,16,.14)">
+          <sc-for list="{{ artist.works }}" as="w" hint-placeholder-count="4">
+            <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,2fr) minmax(0,1fr) minmax(0,auto);gap:24px;align-items:center;padding:20px 0;border-bottom:1px solid rgba(17,17,16,.1)">
+              <p style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-size:20px;font-style:italic">{{ w.title }}</p>
+              <p style="margin:0;font-size:13.5px;color:#6a6a62">{{ w.meta }}</p>
+              <p style="margin:0;font-size:14px">{{ w.priceLabel }}</p>
+              <div style="display:flex;gap:10px;justify-content:flex-end">
+                <span style="padding:10px 18px;font-size:12.5px;letter-spacing:.07em;text-transform:uppercase;border:1px solid rgba(17,17,16,.22);cursor:pointer" onClick="{{ w.enquire }}">Enquire</span>
+                <span style="padding:10px 18px;font-size:12.5px;letter-spacing:.07em;text-transform:uppercase;background:{{ w.addBg }};color:{{ w.addColor }};border:{{ w.addBorder }};cursor:pointer" onClick="{{ w.add }}">{{ w.addLabel }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </div>
+  </sc-if>
+
+  <footer style="position:relative;padding:40px;border-top:1px solid rgba(17,17,16,.1);display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;font-size:13px;color:#5f5f58">
+    <svg viewBox="0 0 220 70" width="180" height="58" style="position:absolute;left:50%;top:-26px;transform:translateX(-50%);opacity:{{ inkOpacity }};pointer-events:none" fill="none">
+      <path d="M4 48c28 10 44-26 70-18 18 6 8 28 28 30 24 2 24-34 46-32 14 1 12 18 26 14 14-4 18-14 22-22" stroke="{{ inkColor }}" stroke-width="1.1" stroke-linecap="round" />
+    </svg>
+    <span style="letter-spacing:.14em">SAAM &mdash; 41 Buiten Street, Cape Town</span>
+    <span>hello@saam.gallery &middot; Wed&ndash;Sat, 10&ndash;17h</span>
+  </footer>
+
+  <sc-if value="{{ lightbox }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:70;background:rgba(251,251,250,.96);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:48px;animation:saamFade .28s ease-out both" onClick="{{ closeLightbox }}">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,320px);gap:56px;max-width:1120px;width:100%;align-items:center" onClick="{{ stop }}">
+        <div style="position:relative" style-after="content:'';position:absolute;left:8%;right:8%;bottom:-34px;height:66px;background:linear-gradient(to bottom, rgba(17,17,16,.22), rgba(17,17,16,0));filter:blur(14px);border-radius:50%;pointer-events:none">
+          <div style="position:relative;height:min(64vh,560px);background:#fff;padding:14px;border:1px solid rgba(17,17,16,.09);box-shadow:0 2px 4px rgba(17,17,16,.10), 30px 34px 60px -26px rgba(17,17,16,.36)">
+            <image-slot id="{{ lightbox.slotId }}" shape="rect" placeholder="{{ lightbox.title }}" style="width:100%;height:100%"></image-slot>
+          </div>
+        </div>
+        <div>
+          <p style="margin:0 0 6px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#5f5f58">{{ lightbox.artistName }}</p>
+          <p style="margin:0 0 14px;font-family:'Instrument Serif',Georgia,serif;font-size:34px;font-style:italic;line-height:1.15">{{ lightbox.title }}</p>
+          <p style="margin:0 0 22px;font-size:14px;line-height:1.7;color:#4a4a45">{{ lightbox.meta }}<br />{{ lightbox.statusLabel }}</p>
+          <p style="margin:0 0 26px;font-size:20px">{{ lightbox.priceLabel }}</p>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <span style="padding:14px 22px;text-align:center;background:{{ lightbox.addBg }};color:{{ lightbox.addColor }};border:{{ lightbox.addBorder }};font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" onClick="{{ lightbox.add }}">{{ lightbox.addLabel }}</span>
+            <span style="padding:14px 22px;text-align:center;border:1px solid rgba(17,17,16,.22);font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" onClick="{{ lightbox.enquire }}">Enquire about this work</span>
+            <span style="padding:6px;text-align:center;font-size:12.5px;color:#5f5f58;cursor:pointer" onClick="{{ closeLightbox }}">Close</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ cartOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:80;background:rgba(17,17,16,.22);display:flex;justify-content:flex-end" onClick="{{ closeCart }}">
+      <aside style="width:min(460px,100%);height:100%;background:#fbfbfa;border-left:1px solid rgba(17,17,16,.1);padding:32px;overflow:auto;box-shadow:-30px 0 60px -30px rgba(17,17,16,.4)" onClick="{{ stop }}">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:28px">
+          <p style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-size:28px">{{ cartTitle }}</p>
+          <span style="font-size:12.5px;color:#5f5f58;cursor:pointer" onClick="{{ closeCart }}">Close</span>
+        </div>
+
+        <sc-if value="{{ cartEmpty }}" hint-placeholder-val="{{ false }}">
+          <p style="margin:0;font-size:15px;line-height:1.7;color:#6a6a62">Nothing held yet. Add a work from any artist page and it is reserved for 48 hours.</p>
+        </sc-if>
+
+        <sc-if value="{{ showCartList }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <sc-for list="{{ cartItems }}" as="c" hint-placeholder-count="2">
+              <div style="display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:16px;align-items:center;padding:16px 0;border-bottom:1px solid rgba(17,17,16,.1)">
+                <div style="height:64px;background:#fff;padding:4px;border:1px solid rgba(17,17,16,.1);box-shadow:0 6px 14px -8px rgba(17,17,16,.4)">
+                  <image-slot id="{{ c.slotId }}" shape="rect" placeholder="&nbsp;" style="width:100%;height:100%"></image-slot>
+                </div>
+                <div>
+                  <p style="margin:0;font-family:'Instrument Serif',Georgia,serif;font-size:18px;font-style:italic">{{ c.title }}</p>
+                  <p style="margin:3px 0 0;font-size:12.5px;color:#5f5f58">{{ c.artistName }} &middot; {{ c.priceLabel }}</p>
+                </div>
+                <span style="font-size:12px;color:#5f5f58;cursor:pointer" onClick="{{ c.remove }}">Remove</span>
+              </div>
+            </sc-for>
+            <div style="display:flex;justify-content:space-between;margin:24px 0 8px;font-size:15px">
+              <span>Subtotal</span><span>{{ cartTotal }}</span>
+            </div>
+            <p style="margin:0 0 24px;font-size:12.5px;color:#5f5f58">Crating, insured freight and duties quoted at checkout.</p>
+            <span style="display:block;padding:15px;text-align:center;background:#111110;color:#fbfbfa;font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" onClick="{{ toCheckout }}">Checkout</span>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showCheckout }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <p style="margin:0 0 4px;font-size:14px;line-height:1.7;color:#4a4a45">{{ cartCount }} work(s) &middot; {{ cartTotal }}</p>
+            <input placeholder="Full name" style="padding:13px 14px;border:1px solid rgba(17,17,16,.2);background:#fff;font-size:14px" />
+            <input placeholder="Email" style="padding:13px 14px;border:1px solid rgba(17,17,16,.2);background:#fff;font-size:14px" />
+            <input placeholder="Shipping address" style="padding:13px 14px;border:1px solid rgba(17,17,16,.2);background:#fff;font-size:14px" />
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <input placeholder="City" style="padding:13px 14px;border:1px solid rgba(17,17,16,.2);background:#fff;font-size:14px" />
+              <input placeholder="Country" style="padding:13px 14px;border:1px solid rgba(17,17,16,.2);background:#fff;font-size:14px" />
+            </div>
+            <input placeholder="Card number" style="padding:13px 14px;border:1px solid rgba(17,17,16,.2);background:#fff;font-size:14px" />
+            <span style="display:block;padding:15px;text-align:center;background:#111110;color:#fbfbfa;font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-top:6px" onClick="{{ placeOrder }}">Place order</span>
+            <span style="text-align:center;font-size:12.5px;color:#5f5f58;cursor:pointer" onClick="{{ backToCart }}">Back to collection</span>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showDone }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <p style="margin:0 0 16px;font-family:'Instrument Serif',Georgia,serif;font-size:26px;line-height:1.3">Thank you. The works are marked as held.</p>
+            <p style="margin:0 0 26px;font-size:15px;line-height:1.7;color:#4a4a45">A confirmation and freight quote follow by email. The gallery and the artist will both be in touch.</p>
+            <span style="display:block;padding:15px;text-align:center;border:1px solid rgba(17,17,16,.22);font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" onClick="{{ closeCart }}">Back to the gallery</span>
+          </div>
+        </sc-if>
+      </aside>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ enquiry }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:90;background:rgba(17,17,16,.24);display:flex;align-items:center;justify-content:center;padding:32px" onClick="{{ closeEnquiry }}">
+      <div style="width:min(520px,100%);background:#fbfbfa;padding:36px;border:1px solid rgba(17,17,16,.1);box-shadow:0 40px 80px -40px rgba(17,17,16,.5);animation:saamFade .26s ease-out both" onClick="{{ stop }}">
+        <p style="margin:0 0 6px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#5f5f58">Enquiry</p>
+        <p style="margin:0 0 22px;font-family:'Instrument Serif',Georgia,serif;font-size:28px;line-height:1.2">{{ enquiry.heading }}</p>
+        <sc-if value="{{ enquirySent }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <p style="margin:0 0 26px;font-size:15px;line-height:1.7;color:#4a4a45">Sent. You will hear from us within two working days.</p>
+            <span style="display:block;padding:14px;text-align:center;border:1px solid rgba(17,17,16,.22);font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" onClick="{{ closeEnquiry }}">Close</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ enquiryForm }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <input placeholder="Name" style="padding:13px 14px;border:1px solid rgba(17,17,16,.2);background:#fff;font-size:14px" />
+            <input placeholder="Email" style="padding:13px 14px;border:1px solid rgba(17,17,16,.2);background:#fff;font-size:14px" />
+            <textarea rows="4" placeholder="Your message" style="padding:13px 14px;border:1px solid rgba(17,17,16,.2);background:#fff;font-size:14px;resize:vertical"></textarea>
+            <span style="display:block;padding:14px;text-align:center;background:#111110;color:#fbfbfa;font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer" onClick="{{ sendEnquiry }}">Send enquiry</span>
+            <span style="text-align:center;font-size:12.5px;color:#5f5f58;cursor:pointer" onClick="{{ closeEnquiry }}">Cancel</span>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;inkColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#111110&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#111110&quot;,&quot;#8a7a5e&quot;,&quot;#3c5a6e&quot;],&quot;section&quot;:&quot;Ink&quot;},&quot;showInk&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Ink&quot;}}">
+const ARTISTS = [
+  { name: "Thandi Mokoena", medium: "Oil on linen", based: "Johannesburg", instagram: "@thandimokoena",
+    short: "Interiors emptied of their people, painted from the light that stays behind.",
+    bio: "Mokoena paints rooms after the fact — a chair pushed out, curtains still moving. Her surfaces are built in thin, slow layers so the wall behind the canvas seems to carry on through it.",
+    works: [["Afternoon, Held","2025","Oil on linen","140 × 110 cm",186000,true],["Doorway (Yeoville)","2024","Oil on linen","90 × 70 cm",124000,true],["Two Chairs","2024","Oil on board","60 × 45 cm",68000,false],["Late Sun","2023","Oil on linen","110 × 110 cm",142000,true]] },
+  { name: "Pieter van Wyk", medium: "Charcoal on paper", based: "Stellenbosch", instagram: "@pvw.studio",
+    short: "Portraits worked until the paper bruises, then lifted back out with an eraser.",
+    bio: "Van Wyk draws one sitter over many weeks. The finished sheets hold every previous attempt beneath them, which is why his faces read as though they are still deciding something.",
+    works: [["Sitter VII","2025","Charcoal on paper","150 × 100 cm",92000,true],["Sitter III","2024","Charcoal and chalk","100 × 70 cm",64000,true],["Study, Hands","2024","Charcoal on paper","40 × 30 cm",28000,true],["Nightwatch","2023","Charcoal on paper","120 × 90 cm",78000,false]] },
+  { name: "Lerato Nkosi", medium: "Ceramic and glaze", based: "Durban", instagram: "@leratomakes",
+    short: "Vessels thrown thin enough to lean, glazed in salt and ash.",
+    bio: "Nkosi throws forms that sit just past their balance point. The glazes are mixed from river silt and wood ash, so no two firings agree with each other.",
+    works: [["Leaning Vessel No. 9","2025","Stoneware, ash glaze","52 cm high",46000,true],["Salt Pair","2025","Porcelain, salt glaze","28 cm high",32000,true],["River Bowl","2024","Stoneware","44 cm diameter",38000,false],["Ash Column","2024","Stoneware, ash glaze","68 cm high",58000,true]] },
+  { name: "Ruan Basson", medium: "Cyanotype on cotton", based: "Cape Town", instagram: "@ruan.cyan",
+    short: "Sunlight printed directly onto cloth on the roof of the gallery.",
+    bio: "Basson exposes coated cotton on the gallery roof, sometimes for a full day. Wind, shade and passing gulls all leave their record in the blue.",
+    works: [["Roof Exposure, 11 Hours","2025","Cyanotype on cotton","200 × 150 cm",74000,true],["Gull","2025","Cyanotype on cotton","80 × 60 cm",34000,true],["Wind Study","2024","Cyanotype on paper","70 × 50 cm",26000,true],["Blue Field","2023","Cyanotype on cotton","160 × 120 cm",62000,false]] },
+  { name: "Zanele Mahlangu", medium: "Textile assemblage", based: "Pretoria", instagram: "@zanele.assembles",
+    short: "Inherited cloth cut down and rebuilt into low, quiet reliefs.",
+    bio: "Mahlangu works with cloth from her family and from markets she can name. Cut, stacked and stitched flat, the pieces sit a few centimetres off the wall and cast their own shadow.",
+    works: [["Household I","2025","Cotton, wool, thread","180 × 140 cm",158000,true],["Household II","2025","Cotton, linen, thread","180 × 140 cm",158000,true],["Small Inheritance","2024","Cloth on board","50 × 40 cm",42000,true],["Fold","2023","Wool, thread","120 × 90 cm",96000,false]] },
+  { name: "Kim Oosthuizen", medium: "Pigment on board", based: "Knysna", instagram: "@kimoosthuizen",
+    short: "Flat fields of hand-ground pigment that change as you walk past them.",
+    bio: "Oosthuizen grinds her own pigment and lays it down in single passes on gessoed board. Read straight on, the panels are almost nothing; at an angle they turn.",
+    works: [["Panel (Ochre)","2025","Pigment on board","120 × 120 cm",112000,true],["Panel (Slate)","2025","Pigment on board","120 × 120 cm",112000,true],["Turn","2024","Pigment on board","70 × 70 cm",58000,false],["Quiet Ground","2024","Pigment on board","90 × 90 cm",74000,true]] }
+];
+
+function rng(seed) { let t = seed >>> 0; return () => { t += 0x6D2B79F5; let x = Math.imul(t ^ (t >>> 15), 1 | t); x = (x + Math.imul(x ^ (x >>> 7), 61 | x)) ^ x; return ((x ^ (x >>> 14)) >>> 0) / 4294967296; }; }
+
+function squiggle(r, w, h) {
+  const n = 3 + Math.floor(r() * 3);
+  let x = 4 + r() * 10, y = h * (0.45 + r() * 0.4);
+  let d = "M" + x.toFixed(1) + " " + y.toFixed(1);
+  for (let i = 0; i < n; i++) {
+    const nx = x + (w - x - 6) / (n - i);
+    const c1x = x + (nx - x) * (0.2 + r() * 0.25), c1y = y - (10 + r() * h * 0.7);
+    const c2x = x + (nx - x) * (0.6 + r() * 0.25), c2y = y + (r() * h * 0.6 - h * 0.3);
+    const ny = h * (0.2 + r() * 0.65);
+    d += " C" + c1x.toFixed(1) + " " + c1y.toFixed(1) + " " + c2x.toFixed(1) + " " + c2y.toFixed(1) + " " + nx.toFixed(1) + " " + ny.toFixed(1);
+    x = nx; y = ny;
+  }
+  if (r() > 0.45) {
+    const lr = 6 + r() * 12;
+    d += " c" + (lr * 0.6).toFixed(1) + " " + (-lr).toFixed(1) + " " + (lr * 1.8).toFixed(1) + " " + (lr * 0.4).toFixed(1) + " " + (lr * 0.2).toFixed(1) + " " + (lr * 0.9).toFixed(1);
+  }
+  return d;
+}
+
+const ink = (seed, w, h) => { const r = rng(seed); return { d1: squiggle(r, w, h), d2: squiggle(r, w * 0.8, h * 0.5) }; };
+
+const slug = (s) => s.toLowerCase().replace(/[^a-z]+/g, "-");
+const rand = (n) => "R\u2009" + n.toLocaleString("en-ZA").replace(/,/g, "\u2009");
+
+class Component extends DCLogic {
+  seed = Math.floor(Math.random() * 1e6);
+  ink = {
+    hero: ink(this.seed + 1, 420, 200), hero2: ink(this.seed + 2, 260, 90),
+    about: ink(this.seed + 3, 300, 120), artist: ink(this.seed + 4, 300, 110),
+    footer: ink(this.seed + 5, 220, 70),
+    rows: ARTISTS.map((_, i) => ink(this.seed + 20 + i * 7, 180, 120))
+  };
+  state = { view: "home", artistIndex: 0, lightbox: null, cartOpen: false, cart: [], stage: "cart", enquiry: null, enquirySent: false };
+
+  work(ai, wi) {
+    const a = ARTISTS[ai], w = a.works[wi];
+    const id = slug(a.name) + "-" + wi;
+    const inCart = this.state.cart.some((c) => c.id === id);
+    return {
+      id, slotId: id, artistName: a.name, artistIndex: ai, index: wi,
+      title: w[0], year: w[1], medium: w[2], size: w[3], price: w[4], available: w[5],
+      meta: w[2] + " · " + w[3] + " · " + w[1],
+      priceLabel: w[5] ? rand(w[4]) : "Sold",
+      statusLabel: w[5] ? "Available" : "In a private collection",
+      addLabel: !w[5] ? "Sold" : inCart ? "In collection" : "Add to collection",
+      addBg: !w[5] ? "transparent" : inCart ? "#8a7a5e" : "#111110",
+      addColor: !w[5] ? "#5f5f58" : "#fbfbfa",
+      addBorder: !w[5] ? "1px solid rgba(17,17,16,.22)" : "1px solid transparent",
+      open: () => this.setState({ lightbox: { ai, wi } }),
+      add: () => { if (w[5] && !inCart) this.setState((s) => ({ cart: s.cart.concat([{ id, ai, wi }]), cartOpen: true, stage: "cart" })); },
+      enquire: () => this.setState({ enquiry: { heading: w[0] + " — " + a.name }, enquirySent: false, lightbox: null })
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const cartItems = s.cart.map((c) => {
+      const w = this.work(c.ai, c.wi);
+      return { ...w, remove: () => this.setState((st) => ({ cart: st.cart.filter((x) => x.id !== c.id) })) };
+    });
+    const total = cartItems.reduce((n, w) => n + w.price, 0);
+    const lb = s.lightbox ? this.work(s.lightbox.ai, s.lightbox.wi) : null;
+    const a = ARTISTS[s.artistIndex];
+
+    return {
+      inkColor: this.props.inkColor ?? "#111110",
+      inkOpacity: (this.props.showInk ?? true) ? 0.62 : 0,
+      ink: this.ink,
+      isHome: s.view === "home",
+      isArtist: s.view === "artist",
+      goHome: () => this.setState({ view: "home", lightbox: null }),
+      scrollAbout: () => { const el = document.getElementById("saam-about"); if (el) window.scrollTo({ top: el.offsetTop - 80, behavior: "smooth" }); },
+      artistRows: ARTISTS.map((ar, ai) => ({
+        name: ar.name, medium: ar.medium, short: ar.short,
+        number: String(ai + 1).padStart(2, "0"),
+        open: () => { this.setState({ view: "artist", artistIndex: ai }); window.scrollTo({ top: 0 }); },
+        ink: this.ink.rows[ai],
+        w1: this.work(ai, 0), w2: this.work(ai, 1), w3: this.work(ai, 2)
+      })),
+      artist: {
+        name: a.name, medium: a.medium, based: a.based, bio: a.bio,
+        instagram: a.instagram, instagramUrl: "https://instagram.com/" + a.instagram.replace("@", ""),
+        works: a.works.map((_, wi) => this.work(s.artistIndex, wi)),
+        enquireStudio: () => this.setState({ enquiry: { heading: "Studio enquiry — " + a.name }, enquirySent: false })
+      },
+      lightbox: lb,
+      closeLightbox: () => this.setState({ lightbox: null }),
+      stop: (e) => e.stopPropagation(),
+      cartCount: s.cart.length,
+      cartItems, cartOpen: s.cartOpen,
+      cartTitle: s.stage === "checkout" ? "Checkout" : s.stage === "done" ? "Confirmed" : "Your collection",
+      cartEmpty: s.stage === "cart" && s.cart.length === 0,
+      showCartList: s.stage === "cart" && s.cart.length > 0,
+      showCheckout: s.stage === "checkout",
+      showDone: s.stage === "done",
+      cartTotal: rand(total),
+      openCart: () => this.setState({ cartOpen: true, stage: this.state.stage === "done" ? "cart" : this.state.stage }),
+      closeCart: () => this.setState({ cartOpen: false, stage: this.state.stage === "done" ? "cart" : this.state.stage, cart: this.state.stage === "done" ? [] : this.state.cart }),
+      toCheckout: () => this.setState({ stage: "checkout" }),
+      backToCart: () => this.setState({ stage: "cart" }),
+      placeOrder: () => this.setState({ stage: "done" }),
+      enquiry: s.enquiry,
+      enquirySent: s.enquirySent,
+      enquiryForm: !s.enquirySent,
+      sendEnquiry: () => this.setState({ enquirySent: true }),
+      closeEnquiry: () => this.setState({ enquiry: null, enquirySent: false })
+    };
+  }
+}
+
+</script>
+</body>
+</html>
