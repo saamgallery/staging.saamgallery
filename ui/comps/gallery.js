@@ -23,9 +23,9 @@ function galleryRow(artist, index) {
     var wall = works.map(function (work, i) {
         var shape = ROW_SHAPE[i] || ROW_SHAPE[0];
         return '<div class="wall__work" style="margin-top:' + shape.offset + 'px">' +
-                   '<div onclick="openLightbox(' + work.id + ')">' +
+                   '<a href="' + esc(workPath(work)) + '" onclick="return follow(event, function () { openLightbox(' + work.id + '); })">' +
                        frame(work, shape.height + "px", "pointer") +
-                   '</div>' +
+                   '</a>' +
                    '<p class="caption"><em>' + esc(work.title) + '</em>, ' + esc(work.year) +
                        '<br>' + priceLabel(work) + '</p>' +
                '</div>';
@@ -37,7 +37,8 @@ function galleryRow(artist, index) {
                    '<h2 class="row__name">' + esc(artist.name) + '</h2>' +
                    '<p class="row__medium">' + esc(artist.medium) + '</p>' +
                    '<p class="row__short">' + esc(artist.short) + '</p>' +
-                   '<span class="underlined" onclick="openArtist(' + artist.id + ')">View artist</span>' +
+                   '<a class="underlined" href="' + esc(artistPath(artist.id)) + '" ' +
+                      'onclick="return follow(event, function () { openArtist(' + artist.id + '); })">View artist</a>' +
                '</div>' +
                '<div class="wall">' + wall + '</div>' +
            '</section>';

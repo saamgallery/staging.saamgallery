@@ -256,6 +256,39 @@ overwritten. Its rows are the gallery's current roster and are the offline
 build's data. When an online build exists it reads the real back end instead and
 `{{demo-js}}` stays out of its map.
 
+## Addresses
+
+Every view has its own path, so an artist or a single work can be linked to:
+
+| path | shows |
+| --- | --- |
+| `/` | the gallery |
+| `/thandi-mokoena` | an artist |
+| `/thandi-mokoena/afternoon-held` | that artist's page with the work open |
+| `/studio` | the studio (picker on staging, sign-in on production) |
+
+- **Slugs** come from the artist's name and the work's title. If two works by
+  one artist share a title, the later one (by id) gets `-2`. Renaming an artist
+  or a work changes its address, so old links to it fall back to the gallery
+  (an unknown work falls back to its artist).
+- **Router** — `applyRoute()` in `ui/layout.js` reads the address on load,
+  when the catalogue arrives, and on Back/Forward. Opening a view pushes its
+  path; closing a work steps back, so Close and the Back button agree. Page
+  titles follow the view.
+- **Base path** — each build writes a `<base href>`: `/ui/dist/` for `dev`
+  (Live Server at the repo root), `/staging.saamgallery/` for `stg` (the
+  github.io project site), `/` for `prd`. Override with `make stg BASE=/` once
+  staging has its own domain.
+- **GitHub Pages has no routing**, so the build also publishes the page as
+  `404.html`, which Pages serves for any path without a file. Two effects: deep
+  links work everywhere on Pages, but they arrive with HTTP status 404, which
+  search engines won't index. Before production SEO matters, the `prd` build
+  should also write a real `<artist>/index.html` (and work pages) per catalogue
+  entry.
+- **Locally**, Live Server has no such fallback, so reloading on a deep path
+  404s there; navigate from the home page instead. Opened from disk (`file://`)
+  there are no paths at all, only views.
+
 ## Images
 
 Artists add a photograph to a work from the studio's work form. `frame()` in

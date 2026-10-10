@@ -28,9 +28,28 @@ function lightboxTemplate(state) {
 
 var lightbox = mount(
     document.getElementById("lightbox"),
-    { work: null },
+    { work: null, pushed: false },
     lightboxTemplate
 );
 
-function openLightbox(workId) { lightbox.work = workId; }
-function closeLightbox()      { lightbox.work = null; }
+/* Opening a work gives it its own address (<artist>/<work>); closing
+   goes back to the view underneath — by stepping back in history when
+   this page opened it, so Back and Close agree. */
+function openLightbox(workId) {
+    var work = workById(workId);
+    if (!work) return;
+    lightbox.work = workId;
+    lightbox.pushed = ROUTING;
+    go(workPath(work));
+}
+
+function closeLightbox() {
+    if (!lightbox.work) return;
+    if (lightbox.pushed) {
+        lightbox.pushed = false;
+        history.back();                 // popstate → applyRoute shows what was underneath
+        return;
+    }
+    lightbox.work = null;
+    go(artist.current ? artistPath(artist.current) : "", true);
+}

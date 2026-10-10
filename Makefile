@@ -25,6 +25,22 @@ COMPS     := $(wildcard ui/comps/*.js)
 IMGS      := $(wildcard ui/img/*)
 DEPS      := $(SRC) ui/layout.css ui/layout.js ui/reactivity.js ui/demo.js $(COMPS) $(MAP) $(JS_MAP)
 
+# Where each build is served from — written into <base href>, which is
+# what the router and every relative URL resolve against. dev assumes
+# Live Server at the repo root; staging is the github.io project site.
+# Override per run, e.g. `make stg BASE=/` once staging has its domain.
+dev: BASE ?= /ui/dist/
+stg: BASE ?= /staging.saamgallery/
+prd: BASE ?= /
+
+# The page is also published as 404.html: GitHub Pages serves that for
+# any path it has no file for, so /<artist>/<work> loads the site and
+# the router opens the right view.
+define finish_html
+	@sed -i 's#{{base}}#$(BASE)#' $(BUILD_DIR)/index.html
+	@cp $(BUILD_DIR)/index.html $(BUILD_DIR)/404.html
+endef
+
 # the compose macro (vendored from the unframe kit; no submodule needed)
 include make/tpl.mk
 
@@ -38,6 +54,7 @@ dev: $(DEPS)
 	$(call compose,ui/layout.js,$(JS_MAP),$(BUILD_DIR)/index.js)
 	@sed -i '/\/\/online-start/,/\/\/online-end/d; /\/\/online$$/d' $(BUILD_DIR)/index.js
 	$(call compose,$(SRC),$(MAP),$(BUILD_DIR)/index.html)
+	$(finish_html)
 	@rm -f $(BUILD_DIR)/robots.txt
 	@cp $(IMGS) $(BUILD_DIR)/img/
 	@echo "dev: offline build → $(BUILD_DIR)/index.html"
@@ -50,7 +67,8 @@ stg: $(DEPS)
 	@rm -f $(STG_MAP)
 	@sed -i 's/^\(var DB_ENV *= *\)1;/\10;/' $(BUILD_DIR)/index.js
 	$(call compose,$(SRC),$(MAP),$(BUILD_DIR)/index.html)
-	@sed -i 's#<meta name="robots" content="[^"]*">#<meta name="robots" content="noindex, nofollow">#' $(BUILD_DIR)/index.html
+	$(finish_html)
+	@sed -i 's#<meta name="robots" content="[^"]*">#<meta name="robots" content="noindex, nofollow">#' $(BUILD_DIR)/index.html $(BUILD_DIR)/404.html
 	@printf 'User-agent: *\nDisallow: /\n' > $(BUILD_DIR)/robots.txt
 	@cp $(IMGS) $(BUILD_DIR)/img/
 	@echo "stg: online build (env=0) → $(BUILD_DIR)/index.html"
@@ -63,6 +81,7 @@ prd: $(DEPS)
 	@rm -f $(STG_MAP)
 	@sed -i '/\/\/staging$$/d' $(BUILD_DIR)/index.js
 	$(call compose,$(SRC),$(MAP),$(BUILD_DIR)/index.html)
+	$(finish_html)
 	@printf 'User-agent: *\nAllow: /\n' > $(BUILD_DIR)/robots.txt
 	@cp $(IMGS) $(BUILD_DIR)/img/
 	@echo "prd: online build (env=1) → $(BUILD_DIR)/index.html"

@@ -211,34 +211,148 @@ function priceLabel(work) {
     return work.available ? rand(work.price) : "Sold";
 }
 
+/* ---- Addresses ----
+   Every view has a path under the site's base (the <base href> the
+   build writes): ""  home · "<artist>"  an artist · "<artist>/<work>"
+   an artist with that work open · "studio". Slugs come from names
+   ("Afternoon, Held" → afternoon-held); a clash takes -2, -3 in id
+   order. GitHub Pages has no routing, so the build also publishes the
+   page as 404.html: any deep path loads it, and applyRoute() reads the
+   path. Opened from disk (file://) there are no paths, only views. */
+
+var BASE = new URL(document.baseURI).pathname;
+var ROUTING = location.protocol !== "file:";
+var SITE_TITLE = document.title;
+var applyingRoute = false;
+
+function slugify(text) {
+    return String(text).normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "untitled";
+}
+
+/* id → unique slug for a set of rows, in id order. `taken` reserves
+   slugs the routes already use. */
+function slugsFor(rows, label, taken) {
+    var seen = {}, out = {};
+    (taken || []).forEach(function (s) { seen[s] = true; });
+    rows.slice().sort(function (a, b) { return a.id - b.id; }).forEach(function (row) {
+        var base = slugify(label(row)), slug = base, n = 2;
+        while (seen[slug]) slug = base + "-" + n++;
+        seen[slug] = true;
+        out[row.id] = slug;
+    });
+    return out;
+}
+
+function artistSlugs() { return slugsFor(loadLocal("artists"), function (a) { return a.name; }, ["studio"]); }
+function workSlugs(artistId) { return slugsFor(worksOf(artistId), function (w) { return w.title; }); }
+
+function artistPath(id) { return artistSlugs()[id] || ""; }
+function workPath(work) { return artistPath(work.artist_id) + "/" + workSlugs(work.artist_id)[work.id]; }
+
+/* Record a view's path in the address bar (unless the view is being
+   shown *because of* the address bar), and title the tab to match. */
+function go(path, replace) {
+    if (ROUTING && !applyingRoute && BASE + path !== location.pathname) {
+        history[replace ? "replaceState" : "pushState"](null, "", BASE + path);
+    }
+    titleFor();
+}
+
+function titleFor() {
+    var w = lightbox.work && workById(lightbox.work);
+    var a = artist.current && loadLocal("artists").filter(function (r) { return r.id === artist.current; })[0];
+    document.title = w ? w.title + " — " + (artistOf(w) || {}).name + " — SAAM"
+                   : a ? a.name + " — SAAM"
+                   : studio.visible ? "Studio — SAAM"
+                   : SITE_TITLE;
+}
+
+/* Show whatever the address bar names. Runs on load, after the
+   catalogue arrives, and on back/forward. */
+function applyRoute() {
+    if (!ROUTING) return;
+    var path = decodeURIComponent(location.pathname.indexOf(BASE) === 0
+        ? location.pathname.slice(BASE.length) : location.pathname);
+    var parts = path.replace(/^\/+|\/+$/g, "").replace(/^index\.html$/, "").split("/").filter(Boolean);
+
+    applyingRoute = true;
+    try {
+        if (parts[0] === "studio") return showStudio();
+        var slugs = artistSlugs();
+        var id = Object.keys(slugs).filter(function (k) { return slugs[k] === parts[0]; })[0];
+        if (!id) return showHome();                 // home, or a name we don't know (yet)
+        showArtist(Number(id));
+        var ws = workSlugs(Number(id));
+        var workId = Object.keys(ws).filter(function (k) { return ws[k] === parts[1]; })[0];
+        var next = workId ? Number(workId) : null;
+        if (lightbox.work !== next) {
+            lightbox.work = next;
+            lightbox.pushed = false;
+        }
+    } finally {
+        applyingRoute = false;
+        titleFor();
+    }
+}
+
+window.addEventListener("popstate", applyRoute);
+
+/* For <a href> links into the site: a plain click navigates in place;
+   a modified click (new tab, new window) is left to the browser. */
+function follow(event, view) {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button === 1) return true;
+    event.preventDefault();
+    view();
+    return false;
+}
+
 /* ---- Views ----
    Three mounts share the page: `gallery` renders the artist index,
    `artist` the detail view, `studio` the artist's own workspace. Each
    renders nothing when it is not the current view, so switching is a
-   few assignments. */
+   few assignments. show*() switch the view; the go*() / open*() the
+   page calls also move the address bar and the scroll. */
 
-function goHome() {
+function showHome() {
     artist.current = null;
     studio.visible = false;
     gallery.visible = true;
     lightbox.work = null;
+}
+
+function showArtist(id) {
+    gallery.visible = false;
+    studio.visible = false;
+    artist.current = id;
+}
+
+function showStudio() {
+    gallery.visible = false;
+    artist.current = null;
+    lightbox.work = null;
+    studio.visible = true;
+    resumeStudio();
+}
+
+function goHome() {
+    showHome();
+    go("");
     window.scrollTo({ top: 0 });
 }
 
 function openArtist(id) {
-    gallery.visible = false;
-    studio.visible = false;
-    artist.current = id;
+    showArtist(id);
+    lightbox.work = null;
+    go(artistPath(id));
     window.scrollTo({ top: 0 });
 }
 
-/* The studio opens on sign-in (online) or the artist picker (dev), or
+/* The studio opens on sign-in (prd) or the staging artist picker, or
    straight back into the artist already working. */
 function openStudio() {
-    gallery.visible = false;
-    artist.current = null;
-    studio.visible = true;
-    resumeStudio();
+    showStudio();
+    go("studio");
     window.scrollTo({ top: 0 });
 }
 
@@ -274,6 +388,7 @@ function showSite() {
     // drop held works that have since gone from the catalogue
     cart.items = loadLocal("cart_items").filter(function (row) { return workById(row.work_id); });
     persistCart();
+    applyRoute();
 }
 
 function start() {

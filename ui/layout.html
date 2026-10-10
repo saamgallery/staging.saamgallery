@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <base href="{{base}}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SAAM — a gallery held together</title>
     <meta name="description" content="SAAM is a Cape Town gallery of six artists sharing one wall. Every work hangs in the physical gallery and is available to acquire or enquire after.">
@@ -57,7 +58,7 @@
         </div>
         <div class="site-footer__bottom">
             <span>&copy; 2026 SAAM Gallery, Cape Town</span>
-            <span class="btn btn--light" onclick="openStudio()">Artist log in</span>
+            <a class="btn btn--light" href="studio" onclick="return follow(event, openStudio)">Artist log in</a>
         </div>
     </footer>
 

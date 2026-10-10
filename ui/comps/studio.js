@@ -164,7 +164,8 @@ function studioTemplate(state) {
                            '<p class="eyebrow studio__eyebrow">Studio</p>' +
                            '<h1 class="artist__name">' + esc(a.name) + '</h1>' +
                            '<p class="artist__medium">' + works.length + ' works &middot; ' +
-                               '<span class="underlined" onclick="openArtist(' + a.id + ')">View public page</span></p>' +
+                               '<a class="underlined" href="' + esc(artistPath(a.id)) + '" ' +
+                                  'onclick="return follow(event, function () { openArtist(' + a.id + '); })">View public page</a></p>' +
                        '</div>' +
                        studioDetails(a, state.saved) +
                    '</div>' +

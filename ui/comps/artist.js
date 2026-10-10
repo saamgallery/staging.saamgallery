@@ -2,7 +2,8 @@
 
 function artistHang(work) {
     return '<div class="hang__work">' +
-               '<div onclick="openLightbox(' + work.id + ')">' + frame(work, "330px", "zoom-in") + '</div>' +
+               '<a href="' + esc(workPath(work)) + '" onclick="return follow(event, function () { openLightbox(' + work.id + '); })">' +
+                   frame(work, "330px", "zoom-in") + '</a>' +
                '<p class="hang__title">' + esc(work.title) + '</p>' +
                '<p class="hang__meta">' + workMeta(work) + '</p>' +
                '<p class="hang__price">' + priceLabel(work) + ' &middot; ' +
