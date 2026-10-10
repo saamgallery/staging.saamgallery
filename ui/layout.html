@@ -13,7 +13,7 @@
 
     <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
-    <link rel="stylesheet" href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600|instrument-serif:400,400i">
+    <link rel="stylesheet" href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700|instrument-serif:400,400i">
 
     <style>
         /*{{layout-css}}*/
@@ -26,11 +26,39 @@
     <main>
         <div id="gallery"></div>
         <div id="artist"></div>
+        <div id="studio"></div>
     </main>
 
     <footer class="site-footer">
-        <span class="site-footer__address">SAAM &mdash; 41 Buiten Street, Cape Town</span>
-        <span>hello@saam.gallery &middot; Wed&ndash;Sat, 10&ndash;17h</span>
+        <div class="site-footer__grid">
+            <div class="site-footer__brand">
+                <div class="brand" onclick="goHome()">
+                    <span id="footer-mark"></span>
+                    <span class="brand__word">SAAM</span>
+                </div>
+                <p class="site-footer__line">Six artists, one room. A gallery held together.</p>
+            </div>
+            <div>
+                <p class="site-footer__head">Visit</p>
+                <p>41 Buiten Street<br>Cape Town</p>
+                <p>Wed&ndash;Sat, 10&ndash;17h</p>
+            </div>
+            <div>
+                <p class="site-footer__head">Contact</p>
+                <p><a href="mailto:hello@saam.gallery">hello@saam.gallery</a></p>
+                <p>Shipped worldwide, crated and insured.</p>
+            </div>
+            <div>
+                <p class="site-footer__head">Explore</p>
+                <p><span class="site-footer__link" onclick="goHome()">Artists</span></p>
+                <p><span class="site-footer__link" onclick="scrollAbout()">About</span></p>
+                <p><span class="site-footer__link" onclick="openCart()">Your collection</span></p>
+            </div>
+        </div>
+        <div class="site-footer__bottom">
+            <span>&copy; 2026 SAAM Gallery, Cape Town</span>
+            <span class="btn btn--light" onclick="openStudio()">Artist log in</span>
+        </div>
     </footer>
 
     <div id="lightbox"></div>

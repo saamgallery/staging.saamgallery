@@ -3,36 +3,69 @@
 #
 #  The composer (make/tpl.mk) streams ui/layout.html and inlines
 #  the CSS and every JS file into one static ui/dist/index.html —
-#  no bundler, no npm, just make + awk. That single file plus
+#  no bundler, no npm, just make + awk + sed. That single file plus
 #  ui/img is what GitHub Pages serves.
 #
-#  There is one target because there is one build: `dev`, the
-#  in-browser offline site backed by localStorage. When the gallery
-#  needs a real back end, the online paths go behind //online
-#  markers and `stg`/`prd` targets join it — not before. See README.
+#    dev  offline: the //online code is stripped, the site runs from
+#         localStorage seeded by ui/demo.js. The local preview.
+#    stg  online: Supabase behind every //online block, rows stamped
+#         env=0, no demo seed, kept out of search. What staging serves.
+#         The studio opens on the staging-only artist picker.
+#    prd  online, env=1, indexable. //staging lines are stripped, so
+#         the studio always asks the artist to sign in. For the
+#         production repo, when there is one.
 # ============================================================
 
 BUILD_DIR := ui/dist
 SRC       := ui/layout.html
 MAP       := make/web.map
 JS_MAP    := make/js.map
+STG_MAP   := $(BUILD_DIR)/js.stg.map
 COMPS     := $(wildcard ui/comps/*.js)
 IMGS      := $(wildcard ui/img/*)
+DEPS      := $(SRC) ui/layout.css ui/layout.js ui/reactivity.js ui/demo.js $(COMPS) $(MAP) $(JS_MAP)
 
 # the compose macro (vendored from the unframe kit; no submodule needed)
 include make/tpl.mk
 
-.PHONY: all dev clean
+.PHONY: all dev stg prd clean
 
 all: dev
 
 ## dev — offline single-file build, seeded from ui/demo.js
-dev: $(SRC) ui/layout.css ui/layout.js ui/reactivity.js ui/demo.js $(COMPS) $(MAP) $(JS_MAP)
+dev: $(DEPS)
 	@mkdir -p $(BUILD_DIR)/img
 	$(call compose,ui/layout.js,$(JS_MAP),$(BUILD_DIR)/index.js)
+	@sed -i '/\/\/online-start/,/\/\/online-end/d; /\/\/online$$/d' $(BUILD_DIR)/index.js
 	$(call compose,$(SRC),$(MAP),$(BUILD_DIR)/index.html)
+	@rm -f $(BUILD_DIR)/robots.txt
 	@cp $(IMGS) $(BUILD_DIR)/img/
 	@echo "dev: offline build → $(BUILD_DIR)/index.html"
+
+## stg — online build against Supabase, for the staging site
+stg: $(DEPS)
+	@mkdir -p $(BUILD_DIR)/img
+	@grep -v 'demo-js' $(JS_MAP) > $(STG_MAP)
+	$(call compose,ui/layout.js,$(STG_MAP),$(BUILD_DIR)/index.js)
+	@rm -f $(STG_MAP)
+	@sed -i 's/^\(var DB_ENV *= *\)1;/\10;/' $(BUILD_DIR)/index.js
+	$(call compose,$(SRC),$(MAP),$(BUILD_DIR)/index.html)
+	@sed -i 's#<meta name="robots" content="[^"]*">#<meta name="robots" content="noindex, nofollow">#' $(BUILD_DIR)/index.html
+	@printf 'User-agent: *\nDisallow: /\n' > $(BUILD_DIR)/robots.txt
+	@cp $(IMGS) $(BUILD_DIR)/img/
+	@echo "stg: online build (env=0) → $(BUILD_DIR)/index.html"
+
+## prd — online build for production: sign-in only, no picker
+prd: $(DEPS)
+	@mkdir -p $(BUILD_DIR)/img
+	@grep -v 'demo-js' $(JS_MAP) > $(STG_MAP)
+	$(call compose,ui/layout.js,$(STG_MAP),$(BUILD_DIR)/index.js)
+	@rm -f $(STG_MAP)
+	@sed -i '/\/\/staging$$/d' $(BUILD_DIR)/index.js
+	$(call compose,$(SRC),$(MAP),$(BUILD_DIR)/index.html)
+	@printf 'User-agent: *\nAllow: /\n' > $(BUILD_DIR)/robots.txt
+	@cp $(IMGS) $(BUILD_DIR)/img/
+	@echo "prd: online build (env=1) → $(BUILD_DIR)/index.html"
 
 ## clean — remove the generated output
 clean:

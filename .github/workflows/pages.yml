@@ -33,8 +33,10 @@ jobs:
       - uses: actions/checkout@v4
 
       # make, awk and sed are already on the runner — nothing to install.
-      - name: Build the offline single-file site
-        run: make dev
+      # Staging is the online build: Supabase, rows stamped env=0. The
+      # URL and publishable key live in ui/layout.js, so no secrets.
+      - name: Build the online staging site
+        run: make stg
 
       - uses: actions/configure-pages@v5
 

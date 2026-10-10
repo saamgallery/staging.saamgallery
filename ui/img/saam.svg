@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   sodipodi:docname="saam.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="4"
+     inkscape:cx="289.75"
+     inkscape:cy="425.875"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0.965;stroke-dasharray:none;stroke-opacity:1"
+       id="rect10"
+       width="4.1620336"
+       height="13.061696"
+       x="69.831383"
+       y="106.44228"
+       ry="0.79512852"
+       inkscape:export-filename="saam.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <circle
+       style="fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0.965;stroke-dasharray:none;stroke-opacity:1"
+       id="circle9"
+       cx="72.05056"
+       cy="103.96128"
+       r="2.8229017" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0.965;stroke-dasharray:none;stroke-opacity:1"
+       id="rect9"
+       width="4.6894712"
+       height="10.084156"
+       x="75.444366"
+       y="108.48425"
+       ry="1.1225337" />
+    <circle
+       style="fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0.965;stroke-dasharray:none;stroke-opacity:1"
+       id="path4"
+       cx="77.7211"
+       cy="105.70116"
+       r="3.3647535" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0.965;stroke-dasharray:none;stroke-opacity:1"
+       id="rect8"
+       width="4.3769507"
+       height="9.9434423"
+       x="71.740868"
+       y="113.80173"
+       ry="0.84189904" />
+    <circle
+       style="fill:#000000;stroke:#ffffff;stroke-width:0.965;stroke-dasharray:none;fill-opacity:1;stroke-opacity:1"
+       id="path2"
+       cx="73.972603"
+       cy="110.9589"
+       r="2.9589043" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0.965;stroke-dasharray:none;stroke-opacity:1"
+       id="rect7"
+       width="4.1620336"
+       height="13.061696"
+       x="65.465752"
+       y="105.25166"
+       ry="0.88867289" />
+    <circle
+       style="fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0.965;stroke-dasharray:none;stroke-opacity:1"
+       id="path3"
+       cx="67.684929"
+       cy="102.77067"
+       r="2.589041" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0.965;stroke-dasharray:none;stroke-opacity:1"
+       id="rect5"
+       width="5.178082"
+       height="12.20548"
+       x="60.109657"
+       y="109.33226"
+       ry="1.0757622" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0.965;stroke-dasharray:none;stroke-opacity:1"
+       id="rect6"
+       width="4.4383559"
+       height="8.8767118"
+       x="67.263809"
+       y="114.93145"
+       ry="0.93544137" />
+    <circle
+       style="fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0.965;stroke-dasharray:none;stroke-opacity:1"
+       id="path5"
+       r="3.50507"
+       cy="111.77827"
+       cx="69.601776" />
+    <circle
+       style="fill:#000000;fill-opacity:1;stroke:#ffffff;stroke-width:0.965;stroke-dasharray:none;stroke-opacity:1"
+       id="path1"
+       cx="62.830994"
+       cy="106.06029"
+       r="3.5539989" />
+  </g>
+</svg>

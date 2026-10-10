@@ -6,3 +6,4 @@
 {{lightbox-js}}:ui/comps/lightbox.js
 {{cart-js}}:ui/comps/cart.js
 {{enquiry-js}}:ui/comps/enquiry.js
+{{studio-js}}:ui/comps/studio.js

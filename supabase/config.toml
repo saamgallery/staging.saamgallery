@@ -1,0 +1,21 @@
+# The browser calls every function with only the publishable key, so the
+# gateway's JWT check is off. Each function does its own checking:
+# track-visit / enquiry / order are rate-limited and validated, and
+# studio verifies the caller's Supabase Auth access token itself.
+
+project_id = "dfetvuridflamauzmqoa"
+
+[functions.track-visit]
+verify_jwt = false
+
+[functions.enquiry]
+verify_jwt = false
+
+[functions.order]
+verify_jwt = false
+
+[functions.studio]
+verify_jwt = false
+
+[functions.work-image]
+verify_jwt = false

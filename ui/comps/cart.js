@@ -49,21 +49,25 @@ function cartBody(state) {
     if (state.stage === "checkout") {
         return '<form class="form" onsubmit="placeOrder(event)">' +
                    '<p class="cart__sub">' + state.items.length + ' work(s) &middot; ' + cartTotal() + '</p>' +
-                   '<input required placeholder="Full name">' +
-                   '<input required type="email" placeholder="Email">' +
-                   '<input required placeholder="Shipping address">' +
+                   '<input required name="name" placeholder="Full name" autocomplete="name">' +
+                   '<input required name="email" type="email" placeholder="Email" autocomplete="email">' +
+                   '<input required name="address" placeholder="Shipping address" autocomplete="street-address">' +
                    '<div class="form__pair">' +
-                       '<input required placeholder="City">' +
-                       '<input required placeholder="Country">' +
+                       '<input required name="city" placeholder="City" autocomplete="address-level2">' +
+                       '<input required name="country" placeholder="Country" autocomplete="country-name">' +
                    '</div>' +
-                   '<input required placeholder="Card number" inputmode="numeric">' +
-                   '<button class="btn btn--solid btn--block" type="submit">Place order</button>' +
+                   honeypot() +
+                   '<p class="cart__note">No payment is taken here. The gallery confirms the works and ' +
+                   'sends an invoice with the freight quote.</p>' +
+                   (state.error ? '<p class="form__error">' + esc(state.error) + '</p>' : '') +
+                   '<button class="btn btn--solid btn--block" type="submit"' + (state.busy ? ' disabled' : '') + '>' +
+                       (state.busy ? 'Placing order&hellip;' : 'Place order') + '</button>' +
                    '<span class="btn--quiet" onclick="backToCart()">Back to collection</span>' +
                '</form>';
     }
 
     return '<div>' +
-               '<p class="cart__done">Thank you. The works are marked as held.</p>' +
+               '<p class="cart__done">Thank you. Your order is with the gallery.</p>' +
                '<p class="cart__note">A confirmation and freight quote follow by email. ' +
                'The gallery and the artist will both be in touch.</p>' +
                '<span class="btn btn--ghost btn--block" onclick="closeCart()">Back to the gallery</span>' +
@@ -89,7 +93,7 @@ function cartTemplate(state) {
 
 var cart = mount(
     document.getElementById("cart"),
-    { open: false, stage: "cart", items: [] },
+    { open: false, stage: "cart", items: [], error: "", busy: false },
     cartTemplate
 );
 
@@ -136,12 +140,43 @@ function closeCart() {
     cart.open = false;
 }
 
-function toCheckout() { cart.stage = "checkout"; }
+function toCheckout() { cart.error = ""; cart.stage = "checkout"; }
 function backToCart() { cart.stage = "cart"; }
 
 function placeOrder(event) {
     event.preventDefault();
-    // Offline build: the order is acknowledged in the browser only. The
-    // online build will post it to the back end from here.
+    var f = event.target.elements;
+
+    //online-start
+    cart.error = "";
+    cart.busy = true;
+    callFunction("order", {
+        token: sessionToken(), env: DB_ENV,
+        work_ids: cart.items.map(function (row) { return row.work_id; }),
+        name: f.name.value, email: f.email.value, address: f.address.value,
+        city: f.city.value, country: f.country.value, website: f.website.value
+    }).then(function () {
+        cart.busy = false;
+        cart.stage = "done";
+    }).catch(function (err) {
+        cart.busy = false;
+        if (err && err.status === 409) {
+            // someone else got there first: refresh the catalogue and say which
+            var gone = (err.body.work_ids || []).map(function (id) {
+                var w = workById(id);
+                return w ? w.title : "one work";
+            }).join(", ");
+            loadCatalogue().then(showSite);
+            cart.error = "No longer available: " + gone + ". Remove it to continue.";
+            return;
+        }
+        cart.error = err && err.status === 429
+            ? "Too many orders from here just now. Please try again later."
+            : "The order did not go through. Check your connection and try again.";
+    });
+    return;
+    //online-end
+
+    // Offline build: the order is acknowledged in the browser only.
     cart.stage = "done";
 }
